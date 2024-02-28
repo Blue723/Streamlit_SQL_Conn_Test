@@ -1,42 +1,132 @@
 import streamlit as st
 import pyodbc
 
+import pandas as pd
 
-
-# Initialize connection.
-# Uses st.cache_resource to only run once.
-@st.cache_resource
-def init_connection():
+def conn_sql_pyodbc ():
     servername = 'DESKTOP-5IAPFQC'
     dbname = 'NFL_Data'
     trusted_conneciton = '?trusted_conneciton=yes'
-    driver = '&driver=ODBC+Driver+17+for+SQL+Server'
+    driver = '{ODBC Driver 17 for SQL Server}'
     username = 'MAKeith92'
     password = 'Lopez!123'
     
-    return pyodbc.connect(
-        "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
-        + servername
-        + ";DATABASE="
-        + dbname
-        + ";UID="
-        + username
-        + ";PWD="
-        + password
-    )
+    pyodbc_conn = pyodbc.connect(f'Driver={driver};SERVER={servername};DATABASE={dbname};UID={username};PWD={password};')
 
-conn = init_connection()
+    return pyodbc_conn
+    
+pyodbc_conn = conn_sql_pyodbc()
 
-# Perform query.
-# Uses st.cache_data to only rerun when the query changes or after 10 min.
-@st.cache_data(ttl=600)
-def run_query(query):
-    with conn.cursor() as cur:
-        cur.execute(query)
-        return cur.fetchall()
+#query user selected table
 
-rows = run_query("SELECT * from defense_and_fumbles;")
+def query_team_year(select_table: str, year: int, team: str, con: str):
 
-# Print results.
-for row in rows:
-    st.write(f"{row[0]} has a :{row[1]}:")
+    query = f'select * from {select_table} where Year = {year} and Team = \'{select_team}\';'
+
+    df = pd.read_sql(query, con, index_col='Player').drop(columns=['index'])
+
+    return df
+
+
+#years
+years = range(2010,2024)
+
+team_names=[
+     '49ers',
+     'Bears',
+     'Bengals',
+     'Broncos',
+     'Browns',
+     'Buccaneers',
+     'Buffalos',
+     'Cardinals',
+     'Chargers',
+     'Chiefs',
+     'Colts',
+     'Commanders',
+     'Cowboys',
+     'Dolphins',
+     'Eagles',
+     'Falcons',
+     'Giants',
+     'Jaguars',
+     'Jets',
+     'Lions',
+     'Packers',
+     'Panthers',
+     'Patriots',
+     'Raiders',
+     'Rams',
+     'Ravens',
+     'Saints',
+     'Seahawks',
+     'Steelers',
+     'Texans',
+     'Titans',
+     'Vikings'
+]
+
+select_table_name_li = [
+    'team_stats_and_ranking',
+    'schedule_and_game_results',
+    'team_conversions',
+    'passing',
+    'rushing_and_receiving',
+    'kick_and_punt_returns',
+    'kicking',
+    'punting',
+    'defense_and_fumbles',
+    'scoring_summary',
+    'touchdown_log',
+    'opponent_touchdown_log'
+]
+
+
+# table name list with team and year to format
+table_name_li = [
+    'team_stats_and_ranking*',
+    'schedule_and_game_results*',
+    'team_conversions*',
+    'passing*',
+    'rushing_and_receiving*',
+    'kick_and_punt_returns*',
+    'kicking*',
+    'punting*',
+    'defense_and_fumbles*',
+    'scoring_summary*',
+    'touchdown_log*',
+    'opponent_touchdown_log*'
+]
+
+
+
+#sidebar
+
+st.set_page_config(layout='wide', initial_sidebar_state='expanded')
+
+#titles
+st.sidebar.write('Select the table you would lke to view')
+
+#sidebar selections
+# select years
+select_year = st.sidebar.selectbox('Years', years)
+
+#select table
+select_table = st.sidebar.selectbox('Tables', select_table_name_li)
+
+#select team
+select_team = st.sidebar.selectbox('Teams', team_names)
+
+
+#Main area
+
+#title
+st.title('NFL Data {} {}'.format(select_team, select_year))
+
+
+#select dataframe
+select_df = query_team_year(select_table, select_year, select_team, pyodbc_conn)
+
+
+#show dataframe
+st.write(select_df)
