@@ -15,7 +15,7 @@ def init_connection():
     password = 'Lopez!123'
     
     return pyodbc.connect(
-        "DRIVER={SQL Server};SERVER="
+        "DRIVER={ODBC Driver 17 for SQL Server};SERVER="
         + servername
         + ";DATABASE="
         + dbname
