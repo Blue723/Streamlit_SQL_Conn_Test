@@ -1,9 +1,11 @@
 import streamlit as st
 import pyodbc
 
+import pymssql
+
 import pandas as pd
 
-def conn_sql_pyodbc ():
+def conn_sql_pymssql ():
     servername = 'DESKTOP-5IAPFQC'
     dbname = 'NFL_Data'
     trusted_conneciton = '?trusted_conneciton=yes'
@@ -11,11 +13,11 @@ def conn_sql_pyodbc ():
     username = 'MAKeith92'
     password = 'Lopez!123'
     
-    pyodbc_conn = pyodbc.connect(f'Driver={driver};SERVER={servername};DATABASE={dbname};UID={username};PWD={password};')
+    conn = pymssql.connect(servername, username, password, dbname)
 
-    return pyodbc_conn
+    return conn
     
-pyodbc_conn = conn_sql_pyodbc()
+pymssql_conn = conn_sql_pymssql()
 
 #query user selected table
 
@@ -125,7 +127,7 @@ st.title('NFL Data {} {}'.format(select_team, select_year))
 
 
 #select dataframe
-select_df = query_team_year(select_table, select_year, select_team, pyodbc_conn)
+select_df = query_team_year(select_table, select_year, select_team, pymssql_conn)
 
 
 #show dataframe
