@@ -5,7 +5,7 @@ import pymssql
 
 import pandas as pd
 
-def conn_sql_pymssql ():
+def conn_sql_pyodbc ():
     servername = 'DESKTOP-5IAPFQC'
     dbname = 'NFL_Data'
     trusted_conneciton = '?trusted_conneciton=yes'
@@ -13,11 +13,11 @@ def conn_sql_pymssql ():
     username = 'MAKeith92'
     password = 'Lopez!123'
     
-    conn = pymssql.connect(servername, username, password, dbname)
+    pyodbc_conn = pyodbc.connect(f'Driver={driver};SERVER={servername};DATABASE={dbname};UID={username};PWD={password};')
 
-    return conn
+    return pyodbc_conn
     
-pymssql_conn = conn_sql_pymssql()
+pyodbc_conn = conn_sql_pyodbc()
 
 #query user selected table
 
@@ -127,7 +127,7 @@ st.title('NFL Data {} {}'.format(select_team, select_year))
 
 
 #select dataframe
-select_df = query_team_year(select_table, select_year, select_team, pymssql_conn)
+select_df = query_team_year(select_table, select_year, select_team, pyodbc_conn)
 
 
 #show dataframe
