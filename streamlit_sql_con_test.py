@@ -1,9 +1,11 @@
 import streamlit as st
 import pyodbc
 
-import pymssql
-
 import pandas as pd
+
+import sqlalchemy as sal
+from sqlalchemy import create_engine
+from sqlalchemy.sql import text
 
 def conn_sql_pyodbc ():
     servername = 'DESKTOP-5IAPFQC'
@@ -126,9 +128,18 @@ select_team = st.sidebar.selectbox('Teams', team_names)
 st.title('NFL Data {} {}'.format(select_team, select_year))
 
 
+def run_query(query):
+    with pyodbc_conn.cursor() as cur:
+        cur.execute(query)
+        return cur.fetchall()
+
+rows = run_query(f"SELECT * from {select_table};")
+
+st.write(rows)
+
 #select dataframe
-select_df = query_team_year(select_table, select_year, select_team, pyodbc_conn)
+#select_df = query_team_year(select_table, select_year, select_team, conn)
 
 
 #show dataframe
-st.write(select_df)
+#st.write(select_df)
