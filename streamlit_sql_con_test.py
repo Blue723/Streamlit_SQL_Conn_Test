@@ -20,7 +20,7 @@ def conn_sql_engine():
 
     
     #create engine url to connect to sql server
-    engine = create_engine(f'mssql+pyodbc://{username}:{password}@{servername},1433/{dbname}{trusted_conneciton}{driver}', pool_pre_ping=True)
+    engine = create_engine(f'mssql+pyodbc://{username}:{password}@{servername},1434/{dbname}{trusted_conneciton}{driver}', pool_pre_ping=True)
 
     return engine
 
