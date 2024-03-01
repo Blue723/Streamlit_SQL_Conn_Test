@@ -8,23 +8,24 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 
 
-def conn_sql_pyodbc ():
-    #servername = 'DESKTOP-5IAPFQC'
+def conn_sql_engine():
+    #sql connection
+    # connection link varaibles
     servername = '192.168.1.129'
     dbname = 'NFL_Data'
     trusted_conneciton = '?trusted_conneciton=yes'
-    driver = '{ODBC Driver 17 for SQL Server}'
+    driver = '&driver=ODBC+Driver+17+for+SQL+Server'
     username = 'MAKeith92'
     password = 'Lopez!123'
+
     
-    pyodbc_conn = pyodbc.connect(f'Driver={driver};SERVER={servername},1433;DATABASE={dbname};UID={username};PWD={password};')
+    #create engine url to connect to sql server
+    engine = create_engine(f'mssql+pyodbc://{username}:{password}@{servername},1433/{dbname}{trusted_conneciton}{driver}')
 
-    return pyodbc_conn
-    
-pyodbc_conn = conn_sql_pyodbc()
-
+    return engine
 
 
+conn = conn_sql_engine()
 
 
 
@@ -135,19 +136,9 @@ select_team = st.sidebar.selectbox('Teams', team_names)
 #title
 st.title('NFL Data {} {}'.format(select_team, select_year))
 
-
-def run_query(query):
-    with pyodbc_conn.cursor() as cur:
-        cur.execute(query)
-        return cur.fetchall()
-
-rows = run_query(f"SELECT * from {select_table};")
-
-st.write(rows)
-
 #select dataframe
-#select_df = query_team_year(select_table, select_year, select_team, conn)
+select_df = query_team_year(select_table, select_year, select_team, conn)
 
 
 #show dataframe
-#st.write(select_df)
+st.write(select_df)
