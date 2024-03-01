@@ -9,7 +9,8 @@ from sqlalchemy.sql import text
 
 
 def conn_sql_pyodbc ():
-    servername = 'DESKTOP-5IAPFQC'
+    #servername = 'DESKTOP-5IAPFQC'
+    servername = '192.168.1.129'
     dbname = 'NFL_Data'
     trusted_conneciton = '?trusted_conneciton=yes'
     driver = '{ODBC Driver 17 for SQL Server}'
