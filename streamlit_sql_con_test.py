@@ -7,6 +7,7 @@ import sqlalchemy as sal
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 
+
 def conn_sql_pyodbc ():
     servername = 'DESKTOP-5IAPFQC'
     dbname = 'NFL_Data'
@@ -15,11 +16,17 @@ def conn_sql_pyodbc ():
     username = 'MAKeith92'
     password = 'Lopez!123'
     
-    pyodbc_conn = pyodbc.connect(f'Driver={driver};SERVER={servername};DATABASE={dbname};UID={username};PWD={password};')
+    pyodbc_conn = pyodbc.connect(f'Driver={driver};SERVER={servername},1433;DATABASE={dbname};UID={username};PWD={password};')
 
     return pyodbc_conn
     
 pyodbc_conn = conn_sql_pyodbc()
+
+
+
+
+
+
 
 #query user selected table
 
